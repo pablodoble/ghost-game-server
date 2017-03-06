@@ -4,9 +4,15 @@ module.exports = function (app) {
     app.get('/game/init', function (req, res) {
         gameService
             .initGame()
-            .then(function (data) {
-                res.send(data);
-            });
+            .then(
+                function () {
+                    res.send(200);
+                },
+                function (err) {
+                    res.status(500);
+                    res.send(err);
+                }
+            );
     });
 
     app.get('/game/word/current', function (req, res) {
