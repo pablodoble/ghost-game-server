@@ -1,10 +1,9 @@
 module.exports = function () {
     var currentWord = "olakease";
+    var dictionaryService = require('./dictionary.service');
 
     function initGame() {
-        return new Promise(function (resolve, reject) {
-            resolve();
-        });
+        return dictionaryService.loadDictionary();
     }
 
     function addNewLetter(letter) {
@@ -20,7 +19,8 @@ module.exports = function () {
     };
 
     return {
+        initGame,
         addNewLetter,
         getCurrentWord
     }
-}
+}()

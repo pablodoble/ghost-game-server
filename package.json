@@ -18,6 +18,7 @@
   "homepage": "https://github.com/pablodoble/ghost-game-server#readme",
   "dependencies": {
     "body-parser": "^1.16.1",
-    "express": "^4.14.1"
+    "express": "^4.14.1",
+    "fs": "0.0.1-security"
   }
 }
