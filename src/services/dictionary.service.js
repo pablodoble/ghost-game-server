@@ -51,6 +51,7 @@ module.exports = function () {
 
 
     return {
+        dictionary,
         loadDictionary
     }
 }()
