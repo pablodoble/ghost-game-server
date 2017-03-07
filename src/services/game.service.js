@@ -65,7 +65,6 @@ module.exports = function () {
             } else {
                 _getBestChild()
                     .then(function (bestChild) {
-                        console.log("bestChild in _getNextMove", bestChild);
                         currentWord += bestChild;
                         resolve({
                             winner: null,
@@ -93,7 +92,6 @@ module.exports = function () {
                         return _getNextMove(winner);
                     })
                     .then(function (nextMove) {
-                        console.log("nextMove in addNewLetter", nextMove);
                         resolve(nextMove);
                     });
             } else {
