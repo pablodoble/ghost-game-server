@@ -8,15 +8,15 @@ module.exports = function () {
     }
 
     function checkGameIsInitialized(){
-        return objectUtilsService.objectIsEmpty(dictionaryService.dictionary);
+        return !objectUtilsService.objectIsEmpty(dictionaryService.dictionary);
     }
 
     function addNewLetter(letter) {
         return new Promise(function (resolve, reject) {
             if (checkGameIsInitialized()) {
-                reject();
-            } else {
                 resolve();
+            } else {
+                reject("Game has to be initialized before any call");
             }
         });
     };
@@ -24,9 +24,9 @@ module.exports = function () {
     function getCurrentWord() {
         return new Promise(function (resolve, reject) {
              if (checkGameIsInitialized()) {
-                reject();
-            } else {
                 resolve(currentWord);
+            } else {
+                reject("Game has to be initialized before any call");
             }
         });
     };
