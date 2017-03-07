@@ -1,13 +1,17 @@
 module.exports = function () {
-    var currentWord = "olakease";
+    var currentWord = "";
     var dictionaryService = require('./dictionary.service');
     var objectUtilsService = require('./object-utils.service');
 
     function initGame() {
-        return dictionaryService.loadDictionary();
+        return dictionaryService
+            .loadDictionary()
+            .then(function () {
+                currentWord = "";
+            });
     }
 
-    function checkGameIsInitialized(){
+    function checkGameIsInitialized() {
         return !objectUtilsService.objectIsEmpty(dictionaryService.dictionary);
     }
 
@@ -23,7 +27,7 @@ module.exports = function () {
 
     function getCurrentWord() {
         return new Promise(function (resolve, reject) {
-             if (checkGameIsInitialized()) {
+            if (checkGameIsInitialized()) {
                 resolve(currentWord);
             } else {
                 reject("Game has to be initialized before any call");
