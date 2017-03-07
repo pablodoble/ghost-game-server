@@ -2,7 +2,9 @@ module.exports = function () {
     var MIN_WORD_LENGTH = "4";
     var dictionary = {};
 
-    function readDictionaryFile() {
+    var objectUtilsService = require('./object-utils.service');
+
+    function _readDictionaryFile() {
         var fs = require('fs');
         return new Promise(function (resolve, reject) {
             fs.readFile('src/assets/word.lst', function (err, data) {
@@ -14,18 +16,18 @@ module.exports = function () {
         });
     }
 
-    function addWordToDictionary(word, partialDictionary) {
+    function _addWordToDictionary(word, partialDictionary) {
         var firstChar = word.charAt(0);
         if (!partialDictionary[firstChar]) {
             partialDictionary[firstChar] = {};
         }
         if (word.length > 1) {
             var wordWithoutFirstChar = word.substr(1, word.length - 1);
-            addWordToDictionary(wordWithoutFirstChar, partialDictionary[firstChar]);
+            _addWordToDictionary(wordWithoutFirstChar, partialDictionary[firstChar]);
         }
     }
 
-    function parseDictionaryData(data) {
+    function _parseDictionaryData(data) {
         return new Promise(function (resolve, reject) {
             var words = data
                 .split('\n')
@@ -36,22 +38,81 @@ module.exports = function () {
                     return word.length > MIN_WORD_LENGTH;
                 });
             words.forEach(function (word) {
-                addWordToDictionary(word, dictionary);
+                _addWordToDictionary(word, dictionary);
             });
             resolve();
         });
     }
 
+    function _getSubTreeSync(word) {
+        var firstChar = word.charAt(0);
+        if (word.length <= 1) {
+            return dictionary[firstChar];
+        } else {
+            if (dictionary[firstChar]) {
+                var wordWithoutFirstChar = word.substr(1, word.length - 1);
+                return _getSubTreeSync(wordWithoutFirstChar);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    function _getTreeDepthSync(tree) {
+        var level = 1;
+        var key;
+        for (key in tree) {
+            if (!tree.hasOwnProperty(key)) continue;
+
+            if (typeof tree[key] == 'object') {
+                var depth = _getTreeDepthSync(tree[key]) + 1;
+                level = Math.max(depth, level);
+            }
+        }
+        return level;
+    }
+
     function loadDictionary() {
-        return readDictionaryFile()
+        return _readDictionaryFile()
             .then(function (data) {
-                return parseDictionaryData(data);
+                return _parseDictionaryData(data);
             });
+    }
+
+    function getSubTree(word) {
+        return new Promise(function (resolve, reject) {
+            var subTree = _getSubTreeSync(word);
+            resolve(subTree);
+        });
+    }
+
+    function isWordOnDictionary(word) {
+        return getSubTree(word)
+            .then(function (subTree) {
+                if (subTree && objectUtilsService.objectIsEmpty(subTree)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+    }
+
+    function getTreeDepth(tree) {
+        return new Promise(function (resolve, reject) {
+            if (objectUtilsService.objectIsEmpty(tree)) {
+                resolve(0);
+                return;
+            }
+            resolve(_getTreeDepthSync(tree));
+        });
     }
 
 
     return {
         dictionary,
-        loadDictionary
+        loadDictionary,
+        getSubTree,
+        isWordOnDictionary,
+        getTreeDepth
     }
 }()

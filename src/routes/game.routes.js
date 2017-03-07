@@ -30,11 +30,12 @@ module.exports = function (app) {
     });
 
     app.post('/game/letter/new', function (req, res) {
+        var letter = req.body.letter;
         gameService
-            .addNewLetter("")
+            .addNewLetter(letter)
             .then(
-            function () {
-                res.send('Hello promise!');
+            function (result) {
+                res.send(result);
             },
             function (err) {
                 res.status(400);
