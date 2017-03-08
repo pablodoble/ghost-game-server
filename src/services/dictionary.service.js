@@ -7,7 +7,7 @@ module.exports = function () {
     function _readDictionaryFile() {
         var fs = require('fs');
         return new Promise(function (resolve, reject) {
-            fs.readFile('src/assets/word.lst', function (err, data) {
+            fs.readFile('src/assets/small.lst', function (err, data) {
                 if (err) {
                     reject(err);
                 }
@@ -20,6 +20,9 @@ module.exports = function () {
         var firstChar = word.charAt(0);
         if (!partialDictionary[firstChar]) {
             partialDictionary[firstChar] = {};
+        }
+        if (word.length === 1) {
+            partialDictionary[firstChar]["_"] = {};
         }
         if (word.length > 1) {
             var wordWithoutFirstChar = word.substr(1, word.length - 1);
@@ -35,7 +38,7 @@ module.exports = function () {
                     return word.trim();
                 })
                 .filter(function (word) {
-                    return word.length > MIN_WORD_LENGTH;
+                    return word.length >= MIN_WORD_LENGTH;
                 });
             words.forEach(function (word) {
                 _addWordToDictionary(word, dictionary);
@@ -44,14 +47,14 @@ module.exports = function () {
         });
     }
 
-    function _getSubTreeSync(word) {
+    function _getSubTreeSync(word, partialDictionary) {
         var firstChar = word.charAt(0);
         if (word.length <= 1) {
-            return dictionary[firstChar];
+            return partialDictionary[firstChar];
         } else {
-            if (dictionary[firstChar]) {
+            if (partialDictionary[firstChar]) {
                 var wordWithoutFirstChar = word.substr(1, word.length - 1);
-                return _getSubTreeSync(wordWithoutFirstChar);
+                return _getSubTreeSync(wordWithoutFirstChar, partialDictionary[firstChar]);
             } else {
                 return null;
             }
@@ -81,7 +84,7 @@ module.exports = function () {
 
     function getSubTree(word) {
         return new Promise(function (resolve, reject) {
-            var subTree = _getSubTreeSync(word);
+            var subTree = _getSubTreeSync(word, dictionary);
             resolve(subTree);
         });
     }
@@ -89,7 +92,7 @@ module.exports = function () {
     function isWordOnDictionary(word) {
         return getSubTree(word)
             .then(function (subTree) {
-                if (subTree && objectUtilsService.objectIsEmpty(subTree)) {
+                if (subTree && subTree.hasOwnProperty("_")) {
                     return true;
                 } else {
                     return false;

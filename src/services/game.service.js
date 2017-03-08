@@ -16,17 +16,16 @@ module.exports = function () {
             .then(function (results) {
                 var isWordOnDictionary = results[0];
                 var subTree = results[1];
-
                 if (isWordOnDictionary) {
                     // This mean the playing user has typed a valid word, so he loses
-                    return playingUser; // See README.me to understand playingUser agreement
+                    return !playingUser; // See README.me to understand playingUser agreement
                 } else {
                     if (subTree) {
                         // This mean the playing user has not typed a valid word, so no one loses
                         return null;
                     } else {
                         // This mean the playing user has typed a partial word that cannot produce another one, so he loses
-                        return playingUser;
+                        return !playingUser;
                     }
                 }
             });
@@ -43,7 +42,6 @@ module.exports = function () {
                     promiseArray.push(dictionaryService.getTreeDepth(subTree[key]))
                     candidatesArray.push(key);
                 }
-
                 return Promise
                     .all(promiseArray)
                     .then(function (depths) {
@@ -55,23 +53,29 @@ module.exports = function () {
 
     }
 
-    function _getNextMove(winner) {
+    function _getNextMove() {
         return new Promise(function (resolve, reject) {
-            if (winner !== null) {
-                resolve({
-                    winner: winner,
-                    currentWord: currentWord
-                });
-            } else {
-                _getBestChild()
-                    .then(function (bestChild) {
-                        currentWord += bestChild;
+            _getWinner(true)
+                .then(function (possibleWinner) {
+                    if (possibleWinner !== null) {
                         resolve({
-                            winner: null,
+                            winner: possibleWinner,
                             currentWord: currentWord
                         });
-                    });
-            }
+                    } else {
+                        _getBestChild()
+                            .then(function (bestChild) {
+                                currentWord += bestChild;
+                                return _getWinner(false);
+                            })
+                            .then(function (possibleWinner) {
+                                resolve({
+                                    winner: possibleWinner,
+                                    currentWord: currentWord
+                                });
+                            });
+                    }
+                });
         });
     }
 
@@ -83,14 +87,11 @@ module.exports = function () {
             });
     }
 
-    function addNewLetter(letter, playingUser) {
+    function addNewLetter(letter) {
         return new Promise(function (resolve, reject) {
             if (_checkGameIsInitialized()) {
                 currentWord += letter;
-                _getWinner(playingUser)
-                    .then(function (winner) {
-                        return _getNextMove(winner);
-                    })
+                _getNextMove()
                     .then(function (nextMove) {
                         resolve(nextMove);
                     });
@@ -110,10 +111,20 @@ module.exports = function () {
         });
     }
 
+    function getWordInfo(word) {
+        return dictionaryService.isWordOnDictionary(word)
+        .then(function(isOnDictionary) {
+            return {
+                isOnDictionary
+            }
+        });
+    }
+
 
     return {
         initGame,
         addNewLetter,
-        getCurrentWord
+        getCurrentWord,
+        getWordInfo
     }
 }()

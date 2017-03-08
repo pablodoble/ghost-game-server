@@ -29,6 +29,21 @@ module.exports = function (app) {
             );
     });
 
+    app.get('/game/word/info', function (req, res) {
+        var word = req.body.word;
+        gameService
+            .getWordInfo(word)
+            .then(
+            function (word) {
+                res.send(word);
+            },
+            function (err) {
+                res.status(400);
+                res.send(err);
+            }
+            );
+    });
+
     app.post('/game/letter/new', function (req, res) {
         var letter = req.body.letter;
         gameService
