@@ -29,7 +29,7 @@ module.exports = function (app) {
             );
     });
 
-    app.get('/game/word/info', function (req, res) {
+    app.post('/game/word/info', function (req, res) {
         var word = req.body.word;
         gameService
             .getWordInfo(word)
