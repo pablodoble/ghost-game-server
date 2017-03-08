@@ -6,7 +6,8 @@ module.exports = function (app) {
             .initGame()
             .then(
             function () {
-                res.send(200);
+                res.status(200);
+                res.send({});
             },
             function (err) {
                 res.status(500);
