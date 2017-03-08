@@ -14,4 +14,10 @@ npm install
 npm start
 ```
 
+## Agreement
+- User identification: a boolean variable will identify the user
+    - true: client user
+    - false: machine
+    - null: none of them (used to mean that no one have won, for example)
+
 REST API will be listening for requests on http://localhost:3000

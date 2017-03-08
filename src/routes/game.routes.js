@@ -29,12 +29,28 @@ module.exports = function (app) {
             );
     });
 
-    app.post('/game/letter/new', function (req, res) {
+    app.post('/game/word/info', function (req, res) {
+        var word = req.body.word;
         gameService
-            .addNewLetter("")
+            .getWordInfo(word)
             .then(
-            function () {
-                res.send('Hello promise!');
+            function (word) {
+                res.send(word);
+            },
+            function (err) {
+                res.status(400);
+                res.send(err);
+            }
+            );
+    });
+
+    app.post('/game/letter/new', function (req, res) {
+        var letter = req.body.letter;
+        gameService
+            .addNewLetter(letter)
+            .then(
+            function (result) {
+                res.send(result);
             },
             function (err) {
                 res.status(400);
