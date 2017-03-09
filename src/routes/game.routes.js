@@ -24,7 +24,7 @@ module.exports = function (app) {
                 res.send(word);
             },
             function (err) {
-                res.status(400);
+                res.status(404);
                 res.send(err);
             }
             );
@@ -36,10 +36,11 @@ module.exports = function (app) {
             .getWordInfo(word)
             .then(
             function (word) {
+                res.status(201);                
                 res.send(word);
             },
             function (err) {
-                res.status(400);
+                res.status(404);
                 res.send(err);
             }
             );
@@ -51,10 +52,11 @@ module.exports = function (app) {
             .addNewLetter(letter)
             .then(
             function (result) {
+                res.status(201);
                 res.send(result);
             },
             function (err) {
-                res.status(400);
+                res.status(404);
                 res.send(err);
             }
             );
