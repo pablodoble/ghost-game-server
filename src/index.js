@@ -16,11 +16,6 @@ app.use( function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Root
-app.get('/', function (req, res) {
-    res.send('Hello World!');
-});
-
 // Routes
 require('./routes/game.routes')(app);
 
