@@ -7,7 +7,7 @@ module.exports = function () {
     function _readDictionaryFile() {
         var fs = require('fs');
         return new Promise(function (resolve, reject) {
-            fs.readFile('src/assets/small.lst', function (err, data) {
+            fs.readFile('src/assets/word.lst', function (err, data) {
                 if (err) {
                     reject(err);
                 }
