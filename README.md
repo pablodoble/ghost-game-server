@@ -13,6 +13,7 @@ This application must be running to make the client work.
 npm install
 npm start
 ```
+REST API will be listening for requests on http://localhost:3000
 
 ## Agreement
 - User identification: a boolean variable will identify the user
@@ -20,4 +21,4 @@ npm start
     - false: machine
     - null: none of them (used to mean that no one have won, for example)
 
-REST API will be listening for requests on http://localhost:3000
+
