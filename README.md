@@ -8,7 +8,7 @@ This application must be running to make the client work.
 - Install nodejs downloading the installer from https://nodejs.org/es/
 - Install nodemon globally: npm i nodemon -g (for some reason, it cannot be run as a local dependency)
 
-## Init
+## Getting Started
 ```
 npm install
 npm start
